@@ -1,0 +1,7 @@
+coffee=java cuppa
+big=large huge massive gynormous
+cat=muffin gremlin
+cats=muffins gremlins
+common=ubiquitous usual commonplace frequent ordinary familiar standard prevalent popular quotidian garden-variety normal prevailing
+sample=selection slice specimen instance
+and=& also
