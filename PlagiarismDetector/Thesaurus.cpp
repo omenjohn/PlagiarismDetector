@@ -1,10 +1,10 @@
 #include "Thesaurus.h"
 
-inline Thesaurus::Thesaurus(string name) {
+Thesaurus::Thesaurus(string& name) {
 	this->name = name;
 }
 
-inline void Thesaurus::LoadFile(string path) {
+void Thesaurus::LoadFile(string& path) {
 	this->path = path;
 
 	wifstream file(path);

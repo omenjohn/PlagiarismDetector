@@ -7,16 +7,15 @@
 #include <unordered_map>
 
 namespace fs = std::filesystem;
-using namespace std;
 
 class Thesaurus {
 
 public:
-	string name;
-	string path;
+	std::string name;
+	std::string path;
 
-	unordered_map<wstring, wstring> synonyms;
+	std::unordered_map<std::wstring, std::wstring> synonyms;
 
-	Thesaurus(string name);
-	void LoadFile(string path);
+	Thesaurus(std::string& name);
+	void LoadFile(std::string& path);
 };

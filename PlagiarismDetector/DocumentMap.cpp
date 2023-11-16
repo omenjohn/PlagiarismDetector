@@ -1,18 +1,18 @@
 #include "DocumentMap.h"
 #include "Thesaurus.h"
 
-inline void DocumentMap::Reset() {
+void DocumentMap::Reset() {
 	uniqueWordCount = 0;
 	magnitude = 0;
 	dictionary.clear();
 }
 
-inline DocumentMap::DocumentMap(string name) {
+DocumentMap::DocumentMap(string name) {
 	this->name = name;
 	Reset();
 }
 
-inline void DocumentMap::LoadFile(string path) {
+void DocumentMap::LoadFile(string path) {
 	Reset();
 
 	this->path = path;
@@ -40,7 +40,7 @@ inline void DocumentMap::LoadFile(string path) {
 	}
 }
 
-inline void DocumentMap::Increase(wstring &word, unsigned long times) {
+void DocumentMap::Increase(wstring &word, unsigned long times) {
 	if (dictionary.count(word) == 0) {
 		dictionary.insert(make_pair(word, times));
 		uniqueWordCount++;
@@ -50,7 +50,7 @@ inline void DocumentMap::Increase(wstring &word, unsigned long times) {
 	}
 }
 
-inline void DocumentMap::Simplify(Thesaurus thesaurus)
+void DocumentMap::Simplify(Thesaurus &thesaurus)
 {
 	for (auto& synonym : thesaurus.synonyms) {
 		auto iterator = dictionary.find(synonym.first);
@@ -62,11 +62,11 @@ inline void DocumentMap::Simplify(Thesaurus thesaurus)
 	}
 }
 
-inline void DocumentMap::InsertDefault(wstring word) {
+void DocumentMap::InsertDefault(wstring word) {
 	dictionary.insert(pair<wstring, unsigned long>(word, 0));
 }
 
-inline void DocumentMap::SynchronizeWith(DocumentMap& other) {
+void DocumentMap::SynchronizeWith(DocumentMap& other) {
 
 	synchronizedTarget = &other;
 
@@ -75,7 +75,7 @@ inline void DocumentMap::SynchronizeWith(DocumentMap& other) {
 	}
 }
 
-inline unsigned long DocumentMap::CalculateDotProduct(const DocumentMap& other) {
+unsigned long DocumentMap::CalculateDotProduct(const DocumentMap& other) {
 	unsigned long dotProduct = 0;
 
 	for (const auto& pair : dictionary) {
@@ -86,7 +86,7 @@ inline unsigned long DocumentMap::CalculateDotProduct(const DocumentMap& other) 
 	return dotProduct;
 }
 
-inline double DocumentMap::Bake() {
+double DocumentMap::Bake() {
 	double cumulativeMagnitude = 0;
 	unsigned long cumulativeWords = 0;
 
@@ -103,7 +103,7 @@ inline double DocumentMap::Bake() {
 	return this->magnitude;
 }
 
-inline void DocumentMap::PrintMap() {
+void DocumentMap::PrintMap() {
 	cout << name << ":" << endl;
 
 	int i = 0;
@@ -113,7 +113,7 @@ inline void DocumentMap::PrintMap() {
 	cout << endl;
 }
 
-inline void DocumentMap::PrintInfo() {
+void DocumentMap::PrintInfo() {
 	cout << name << ":" << endl;
 	cout << "  " << "File Path: " << path << endl;
 

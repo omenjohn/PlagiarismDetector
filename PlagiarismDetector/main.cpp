@@ -6,47 +6,46 @@
 #include <unordered_map>
 #include <algorithm>
 
-#include "Test.cpp"
-#include "DocumentMap.cpp"
-#include "Thesaurus.cpp"
+#include "Test.h"
+#include "DocumentMap.h"
+#include "Thesaurus.h"
 
 namespace fs = std::filesystem;
-using namespace std;
-
-bool CompareTestsBySimilarity(const Test* a, const Test* b);
 
 int main(int argc, char* argv[]) {
 
 	if (argc < 2) {
-		cerr << "Usage: " << argv[0] << " <file_path>" << endl;
+		std::cerr << "Usage: " << argv[0] << " <file_path>" << '\n';
 		return 1;
 	}
 
-	cout << endl << "LOADING RESOURCES ==================" << endl;
+	std::cout << '\n' << "LOADING RESOURCES ==================" << '\n';
 
-	cout << endl << "Thesaurii:" << endl;
+	std::cout << '\n' << "Thesaurii:" << '\n';
 	// Load thesaurii
-	list<Thesaurus*> thesaurii;
+	std::list<Thesaurus*> thesaurii;
 
 	for (const auto& file : fs::directory_iterator("./Thesaurus")) {
 		if (!file.is_directory()) {
-			cout << "  Loading " << file.path() << " ...";
-			string name = file.path().filename().stem().string();
+			std::cout << "  Loading " << file.path() << " ..." << std::flush;
+			std::string name = file.path().filename().stem().string();
 			Thesaurus* thesaurus = new Thesaurus(name);
-			thesaurus->LoadFile(file.path().string());
+
+			std::string pathString = file.path().string();
+			thesaurus->LoadFile(pathString);
 
 			thesaurii.push_back(thesaurus);
 
-			cout << "done!" << endl;
+			std::cout << "done!" << std::endl;
 		}
 	}
 
-	cout << endl << "Test Documents:" << endl;
+	std::cout << '\n' << "Test Documents:" << '\n';
 	// Load documents
-	list<Test*> tests;
+	std::list<Test*> tests;
 	for (const auto &file : fs::directory_iterator("./CheckDocuments")) {
 		if (!file.is_directory()) {
-			cout << "  Loading " << file.path() << " ...";
+			std::cout << "  Loading " << file.path() << " ..." << std::flush;
 			Test* test = new Test(file);
 
 			for (auto& thesaurus : thesaurii) {
@@ -55,48 +54,43 @@ int main(int argc, char* argv[]) {
 
 			test->documentMap->Bake();
 			tests.push_back(test);
-			cout << "done!" << endl;
+			std::cout << "done!" << std::endl;
 		}
 	}
 
 	// Profile subject document
-	cout << endl << "Profiling subject document...";
+	std::cout << '\n' << "Profiling subject document..." << std::flush;
 	DocumentMap subject_map = DocumentMap("Subject");
 	subject_map.LoadFile(argv[1]);
 	for (auto thesaurus : thesaurii) {
 		subject_map.Simplify(*thesaurus);
 	}
 	subject_map.Bake();
-	cout << "done!" << endl;
+	std::cout << "done!" << std::endl;
 
-	cout << endl << "BEGIN TESTS =======================" << endl << endl;
+	std::cout << '\n' << "BEGIN TESTS =======================" << '\n' << '\n';
 
 	// Perform tests
 	for (auto& test : tests) {
 		test->Perform(subject_map);
 		
-		cout << test->documentMap->name << ":" << endl;
-		cout << "  Unique Words Regularity: " << test->dotProduct << endl;
-		cout << "  Normalized Dot Product: " << test->normalizedDotProduct << endl;
-		cout << "  Length Comparison: " << test->lengthRatio << endl;
-		cout << "  Confidence: " << test->confidence << '%' << endl << endl;
+		std::cout << test->documentMap->name << ":" << '\n';
+		std::cout << "  Unique Words Regularity: " << test->dotProduct << '\n';
+		std::cout << "  Normalized Dot Product: " << test->normalizedDotProduct << '\n';
+		std::cout << "  Length Comparison: " << test->lengthRatio << '\n';
+		std::cout << "  Confidence: " << test->confidence << '%' << '\n' << std::endl;
 	}
 	
-	cout << endl << "SUMMARY ===========================" << endl << endl;
+	std::cout << '\n' << "SUMMARY ===========================" << '\n' << '\n';
 
-	cout << "Similar results by confidence (descending):" << endl;
+	std::cout << "Similar results by confidence (descending):" << '\n';
 
-	tests.sort(CompareTestsBySimilarity);
+	tests.sort([](const Test* a, const Test* b) {return a->confidence > b->confidence; });
 
 	int i = 0;
 	for (auto& test : tests) {
-		cout << "  #" << ++i << " " << test->documentMap->name << ": " << test->confidence << "%" << endl;
+		std::cout << "  #" << ++i << " " << test->documentMap->name << ": " << test->confidence << "%" << std::endl;
 	}
 
 	return 0;
-}
-
-bool CompareTestsBySimilarity(const Test* a, const Test* b) {
-
-	return a->confidence > b->confidence;
 }
